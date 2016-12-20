@@ -30,14 +30,14 @@ Data.prototype = {
 
 				// If it is a node unlikely to be stringify-ed or looped over
 				// use plain assignment
-				if ( owner.nodeType ) {
+				if ( owner.nodeType ) { //普通对象
 					owner[ this.expando ] = value;
 
 				// Otherwise secure it in a non-enumerable property
 				// configurable must be true to allow the property to be
 				// deleted when data is removed
-				} else {
-					Object.defineProperty( owner, this.expando, {
+				} else { // node对象
+					Object.defineProperty( owner, this.expando, { //这样enumerable  writable 都为false,
 						value: value,
 						configurable: true
 					} );
@@ -85,7 +85,7 @@ Data.prototype = {
 		//
 		//   1. The entire cache object
 		//   2. The data stored at the key
-		//
+		//   获取值
 		if ( key === undefined ||
 				( ( key && typeof key === "string" ) && value === undefined ) ) {
 
@@ -97,7 +97,7 @@ Data.prototype = {
 		//
 		//   1. An object of properties
 		//   2. A key and value
-		//
+		//   设置值
 		this.set( owner, key, value );
 
 		// Since the "set" path can have two possible entry points

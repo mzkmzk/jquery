@@ -33,7 +33,7 @@ jQuery.extend( {
 		var queue = jQuery.queue( elem, type ),
 			startLength = queue.length,
 			fn = queue.shift(),
-			hooks = jQuery._queueHooks( elem, type ),
+			hooks = jQuery._queueHooks( elem, type ), //钩子
 			next = function() {
 				jQuery.dequeue( elem, type );
 			};
@@ -77,13 +77,13 @@ jQuery.fn.extend( {
 	queue: function( type, data ) {
 		var setter = 2;
 
-		if ( typeof type !== "string" ) {
+		if ( typeof type !== "string" ) { //当只有一个参数data的情况下
 			data = type;
 			type = "fx";
 			setter--;
 		}
 
-		if ( arguments.length < setter ) {
+		if ( arguments.length < setter ) { //没有参数的时候 
 			return jQuery.queue( this[ 0 ], type );
 		}
 

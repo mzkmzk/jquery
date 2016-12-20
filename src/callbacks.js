@@ -79,7 +79,7 @@ jQuery.Callbacks = function( options ) {
 				while ( ++firingIndex < list.length ) {
 
 					// Run callback and check for early termination
-					if ( list[ firingIndex ].apply( memory[ 0 ], memory[ 1 ] ) === false &&
+					if ( list[ firingIndex ].apply( memory[ 0 ], memory[ 1 ] ) === false && //stopOnFalse检查到false直接结束
 						options.stopOnFalse ) {
 
 						// Jump to end and forget the data so .add doesn't re-fire
@@ -90,13 +90,13 @@ jQuery.Callbacks = function( options ) {
 			}
 
 			// Forget the data if we're done with it
-			if ( !options.memory ) {
+			if ( !options.memory ) { //如果不是memory就不记住参数
 				memory = false;
 			}
 
 			firing = false;
 
-			// Clean up if we're done firing for good
+			// Clean up if we're done firing for good 专门为once参数设置的,当once设置为true,就情况回调队列
 			if ( locked ) {
 
 				// Keep an empty list if we have data for future add calls
@@ -123,15 +123,15 @@ jQuery.Callbacks = function( options ) {
 						queue.push( memory );
 					}
 
-					( function add( args ) {
+					( function add( args ) { //属性内定义方法比较优秀的写法 
 						jQuery.each( args, function( _, arg ) {
 							if ( jQuery.isFunction( arg ) ) {
-								if ( !options.unique || !self.has( arg ) ) {
+								if ( !options.unique || !self.has( arg ) ) { //如果是unique的防重复
 									list.push( arg );
 								}
 							} else if ( arg && arg.length && jQuery.type( arg ) !== "string" ) {
 
-								// Inspect recursively
+								// Inspect recursively 递归检查
 								add( arg );
 							}
 						} );

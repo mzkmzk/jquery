@@ -535,7 +535,7 @@ jQuery.extend( {
 		s.dataTypes = ( s.dataType || "*" ).toLowerCase().match( rnothtmlwhite ) || [ "" ];
 
 		// A cross-domain request is in order when the origin doesn't match the current origin.
-		if ( s.crossDomain == null ) {
+		if ( s.crossDomain == null ) { //检查是否同域
 			urlAnchor = document.createElement( "a" );
 
 			// Support: IE <=8 - 11, Edge 12 - 13
@@ -557,7 +557,7 @@ jQuery.extend( {
 			}
 		}
 
-		// Convert data if not already a string
+		// Convert data if not already a string 如果不是string则进行转化 
 		if ( s.data && s.processData && typeof s.data !== "string" ) {
 			s.data = jQuery.param( s.data, s.traditional );
 		}
@@ -619,7 +619,7 @@ jQuery.extend( {
 			s.data = s.data.replace( r20, "+" );
 		}
 
-		// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode.
+		// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode. 
 		if ( s.ifModified ) {
 			if ( jQuery.lastModified[ cacheURL ] ) {
 				jqXHR.setRequestHeader( "If-Modified-Since", jQuery.lastModified[ cacheURL ] );
@@ -675,16 +675,16 @@ jQuery.extend( {
 
 			// Send global event
 			if ( fireGlobals ) {
-				globalEventContext.trigger( "ajaxSend", [ jqXHR, s ] );
+				globalEventContext.trigger( "ajaxSend", [ jqXHR, s ] ); //触发请求发送
 			}
 
-			// If request was aborted inside ajaxSend, stop there
+			// If request was aborted inside ajaxSend, stop there //当被ajaxSend 里 abort时,返回
 			if ( completed ) {
 				return jqXHR;
 			}
 
 			// Timeout
-			if ( s.async && s.timeout > 0 ) {
+			if ( s.async && s.timeout > 0 ) { //设置timeout
 				timeoutTimer = window.setTimeout( function() {
 					jqXHR.abort( "timeout" );
 				}, s.timeout );
@@ -705,7 +705,7 @@ jQuery.extend( {
 			}
 		}
 
-		// Callback for when everything is done
+		// Callback for when everything is done //ajax结束时
 		function done( status, nativeStatusText, responses, headers ) {
 			var isSuccess, success, error, response, modified,
 				statusText = nativeStatusText;
@@ -746,7 +746,7 @@ jQuery.extend( {
 			// If successful, handle type chaining
 			if ( isSuccess ) {
 
-				// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode.
+				// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode. 存储一下etga和last-modified
 				if ( s.ifModified ) {
 					modified = jqXHR.getResponseHeader( "Last-Modified" );
 					if ( modified ) {
@@ -801,7 +801,7 @@ jQuery.extend( {
 			statusCode = undefined;
 
 			if ( fireGlobals ) {
-				globalEventContext.trigger( isSuccess ? "ajaxSuccess" : "ajaxError",
+				globalEventContext.trigger( isSuccess ? "ajaxSuccess" : "ajaxError", //触发错误或成功时间
 					[ jqXHR, s, isSuccess ? success : error ] );
 			}
 
@@ -809,11 +809,11 @@ jQuery.extend( {
 			completeDeferred.fireWith( callbackContext, [ jqXHR, statusText ] );
 
 			if ( fireGlobals ) {
-				globalEventContext.trigger( "ajaxComplete", [ jqXHR, s ] );
+				globalEventContext.trigger( "ajaxComplete", [ jqXHR, s ] ); //触发完成时间
 
 				// Handle the global AJAX counter
 				if ( !( --jQuery.active ) ) {
-					jQuery.event.trigger( "ajaxStop" );
+					jQuery.event.trigger( "ajaxStop" ); //触发ajax停止
 				}
 			}
 		}

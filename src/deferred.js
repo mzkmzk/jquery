@@ -18,15 +18,15 @@ function adoptValue( value, resolve, reject ) {
 
 	try {
 
-		// Check for promise aspect first to privilege synchronous behavior
+		// Check for promise aspect first to privilege synchronous behavior 检查副本
 		if ( value && jQuery.isFunction( ( method = value.promise ) ) ) {
 			method.call( value ).done( resolve ).fail( reject );
 
-		// Other thenables
+		// Other thenables 检查then
 		} else if ( value && jQuery.isFunction( ( method = value.then ) ) ) {
 			method.call( value, resolve, reject );
 
-		// Other non-thenables
+		// Other non-thenables 其他情况
 		} else {
 
 			// Support: Android 4.0 only
@@ -60,7 +60,7 @@ jQuery.extend( {
 					jQuery.Callbacks( "once memory" ), 1, "rejected" ]
 			],
 			state = "pending",
-			promise = {
+			promise = { //异步队列的只读副本
 				state: function() {
 					return state;
 				},
@@ -104,8 +104,8 @@ jQuery.extend( {
 					} ).promise();
 				},
 				then: function( onFulfilled, onRejected, onProgress ) {
-					var maxDepth = 0;
-					function resolve( depth, deferred, handler, special ) {
+					var maxDepth = 0; //最大深度 防止爆栈
+					function resolve( depth, deferred, handler, special ) { //深度, 
 						return function() {
 							var that = this,
 								args = arguments,
@@ -115,7 +115,7 @@ jQuery.extend( {
 									// Support: Promises/A+ section 2.3.3.3.3
 									// https://promisesaplus.com/#point-59
 									// Ignore double-resolution attempts
-									if ( depth < maxDepth ) {
+									if ( depth < maxDepth ) { //如果超出最大栈 不处理 
 										return;
 									}
 
@@ -123,7 +123,7 @@ jQuery.extend( {
 
 									// Support: Promises/A+ section 2.3.1
 									// https://promisesaplus.com/#point-48
-									if ( returned === deferred.promise() ) {
+									if ( returned === deferred.promise() ) { // 应该是防止自递归
 										throw new TypeError( "Thenable self-resolution" );
 									}
 
@@ -228,9 +228,9 @@ jQuery.extend( {
 								window.setTimeout( process );
 							}
 						};
-					}
+					} //resolve end
 
-					return jQuery.Deferred( function( newDefer ) {
+					return jQuery.Deferred( function( newDefer ) { //then的返回
 
 						// progress_handlers.add( ... )
 						tuples[ 0 ][ 3 ].add(
@@ -244,7 +244,7 @@ jQuery.extend( {
 							)
 						);
 
-						// fulfilled_handlers.add( ... )
+						// fulfilled_handlers.add( ... ) //成功
 						tuples[ 1 ][ 3 ].add(
 							resolve(
 								0,
@@ -255,7 +255,7 @@ jQuery.extend( {
 							)
 						);
 
-						// rejected_handlers.add( ... )
+						// rejected_handlers.add( ... ) 失败
 						tuples[ 2 ][ 3 ].add(
 							resolve(
 								0,
@@ -266,28 +266,28 @@ jQuery.extend( {
 							)
 						);
 					} ).promise();
-				},
+				}, //对应then
 
 				// Get a promise for this deferred
 				// If obj is provided, the promise aspect is added to the object
 				promise: function( obj ) {
 					return obj != null ? jQuery.extend( obj, promise ) : promise;
 				}
-			},
+			}, //对应着promise
 			deferred = {};
 
 		// Add list-specific methods
 		jQuery.each( tuples, function( i, tuple ) {
-			var list = tuple[ 2 ],
-				stateString = tuple[ 5 ];
+			var list = tuple[ 2 ], //回调队列 
+				stateString = tuple[ 5 ]; //状态对应的string名称 
 
 			// promise.progress = list.add
 			// promise.done = list.add
 			// promise.fail = list.add
-			promise[ tuple[ 1 ] ] = list.add;
+			promise[ tuple[ 1 ] ] = list.add; //把callback.add给到对应的progress done fail 
 
 			// Handle state
-			if ( stateString ) {
+			if ( stateString ) { //成功/失败的回调队列,消息队列不在这循环里
 				list.add(
 					function() {
 
@@ -298,10 +298,10 @@ jQuery.extend( {
 
 					// rejected_callbacks.disable
 					// fulfilled_callbacks.disable
-					tuples[ 3 - i ][ 2 ].disable,
+					tuples[ 3 - i ][ 2 ].disable, //不能使用add和fire 当成功时disable掉失败的 当失败时disable掉成功的
 
 					// progress_callbacks.lock
-					tuples[ 0 ][ 2 ].lock
+					tuples[ 0 ][ 2 ].lock //不能使用add  锁定消息队列 
 				);
 			}
 
@@ -313,7 +313,7 @@ jQuery.extend( {
 			// deferred.notify = function() { deferred.notifyWith(...) }
 			// deferred.resolve = function() { deferred.resolveWith(...) }
 			// deferred.reject = function() { deferred.rejectWith(...) }
-			deferred[ tuple[ 0 ] ] = function() {
+			deferred[ tuple[ 0 ] ] = function() { //对notify resolve reject进行封装
 				deferred[ tuple[ 0 ] + "With" ]( this === deferred ? undefined : this, arguments );
 				return this;
 			};
@@ -321,7 +321,7 @@ jQuery.extend( {
 			// deferred.notifyWith = list.fireWith
 			// deferred.resolveWith = list.fireWith
 			// deferred.rejectWith = list.fireWith
-			deferred[ tuple[ 0 ] + "With" ] = list.fireWith;
+			deferred[ tuple[ 0 ] + "With" ] = list.fireWith; //对notifyWith resolveWith rejectWith进行封装
 		} );
 
 		// Make the deferred a promise
@@ -336,7 +336,7 @@ jQuery.extend( {
 		return deferred;
 	},
 
-	// Deferred helper
+	// Deferred helper when自己的api
 	when: function( singleValue ) {
 		var
 
