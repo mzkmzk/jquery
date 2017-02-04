@@ -181,7 +181,7 @@ jQuery.event = {
 			}, handleObjIn );
 
 			// Init the event handler queue if we're the first
-			if ( !( handlers = events[ type ] ) ) {
+			if ( !( handlers = events[ type ] ) ) { //第一个event进来
 				handlers = events[ type ] = [];
 				handlers.delegateCount = 0;
 
@@ -511,7 +511,7 @@ jQuery.removeEvent = function( elem, type, handle ) {
 
 jQuery.Event = function( src, props ) {
 
-	// Allow instantiation without the 'new' keyword
+	// Allow instantiation without the 'new' keyword 省略new
 	if ( !( this instanceof jQuery.Event ) ) {
 		return new jQuery.Event( src, props );
 	}
@@ -534,7 +534,7 @@ jQuery.Event = function( src, props ) {
 		// Create target properties
 		// Support: Safari <=6 - 7 only
 		// Target should not be a text node (#504, #13143)
-		this.target = ( src.target && src.target.nodeType === 3 ) ?
+		this.target = ( src.target && src.target.nodeType === 3 ) ? //当时属性元素时,获取其父元素
 			src.target.parentNode :
 			src.target;
 

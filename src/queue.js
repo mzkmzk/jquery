@@ -33,7 +33,7 @@ jQuery.extend( {
 		var queue = jQuery.queue( elem, type ),
 			startLength = queue.length,
 			fn = queue.shift(),
-			hooks = jQuery._queueHooks( elem, type ), //钩子
+			hooks = jQuery._queueHooks( elem, type ), //获取remove函数
 			next = function() {
 				jQuery.dequeue( elem, type );
 			};
@@ -83,17 +83,17 @@ jQuery.fn.extend( {
 			setter--;
 		}
 
-		if ( arguments.length < setter ) { //没有参数的时候 
+		if ( arguments.length < setter ) { //没有参数的时候  || 只有一个参数而且为string时
 			return jQuery.queue( this[ 0 ], type );
 		}
 
-		return data === undefined ?
-			this :
+		return data === undefined ? //设置入队
+			this :  //不知道什么傻逼情况会跳到这里
 			this.each( function() {
 				var queue = jQuery.queue( this, type, data );
 
 				// Ensure a hooks for this queue
-				jQuery._queueHooks( this, type );
+				jQuery._queueHooks( this, type ); //给元素添加empty方法
 
 				if ( type === "fx" && queue[ 0 ] !== "inprogress" ) {
 					jQuery.dequeue( this, type );
